@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "patterns": [
+    {
+      "id": "tooling_pair",
+      "cells": ["cell-coder", "cell-creative"],
+      "router": "success_rate",
+      "tags": ["tools","todo","schedule","code","parse"],
+      "roles": ["generator","planner"],
+      "edges": [["cell-coder","cell-creative"]]
+    },
+    {
+      "id": "creative_pair",
+      "cells": ["cell-creative"],
+      "router": "success_rate",
+      "tags": ["creative", "poem", "story"],
+      "roles": ["generator"],
+      "edges": []
+    },
+    {
+      "id": "coder_pair",
+      "cells": ["cell-coder"],
+      "router": "success_rate",
+      "tags": ["code", "typescript", "api", "bug"],
+      "roles": ["generator"],
+      "edges": []
+    },
+    {
+      "id": "critic_chain",
+      "cells": ["cell-coder", "cell-creative"],
+      "router": "keyword",
+      "tags": ["review", "critique"],
+      "roles": ["generator", "critic"],
+      "edges": [["cell-coder", "cell-creative"]]
+    }
+  ]
+}
+

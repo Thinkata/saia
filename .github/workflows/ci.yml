@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install deps (root)
+        run: npm ci
+
+      - name: Install deps (dashboard)
+        run: npm --prefix dashboard ci
+
+      - name: Typecheck
+        run: npm run build --silent
+
+      - name: Lint (placeholder)
+        run: echo "no linter configured"
+
+      - name: Start server
+        run: |
+          TOOLS_ALLOW=file.write,ts.typecheck.project,todo.prioritize.fromdir \
+          SAIA_SECRET=ci-secret \
+          nohup npm start >/dev/null 2>&1 &
+          for i in {1..40}; do
+            if curl -sSf http://127.0.0.1:3000/metrics >/dev/null; then echo "server up"; break; fi; sleep 0.5; done
+
+      - name: Run unit tests
+        run: npm run test:unit --silent
+
+      - name: Run system tests
+        run: npm run test:system --silent
+
+      - name: Upload logs artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: saia-logs
+          path: |
+            logs/*.jsonl
+            knowledge/*.json

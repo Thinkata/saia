@@ -1,0 +1,654 @@
+{
+  "perCell": {
+    "cell-base": {
+      "count": 10,
+      "success": 10,
+      "avgLatency": 1106,
+      "successRate": 1,
+      "emaSuccess": 0.946,
+      "complianceEma": 1,
+      "adaptationSteps": 10,
+      "routerConfidence": 0.5,
+      "SAI": 0.471
+    },
+    "cell-ocean": {
+      "count": 8,
+      "success": 8,
+      "avgLatency": 1113,
+      "successRate": 1,
+      "emaSuccess": 0.916,
+      "complianceEma": 1,
+      "adaptationSteps": 8,
+      "routerConfidence": 0.5,
+      "SAI": 0.368
+    },
+    "(none)": {
+      "count": 54,
+      "success": 0,
+      "avgLatency": 0,
+      "successRate": 0,
+      "emaSuccess": 0.5,
+      "complianceEma": 0.002,
+      "adaptationSteps": 0,
+      "routerConfidence": 0,
+      "SAI": 0
+    },
+    "cell-general": {
+      "count": 5,
+      "success": 5,
+      "avgLatency": 1151,
+      "successRate": 1,
+      "emaSuccess": 0.836,
+      "complianceEma": 1,
+      "adaptationSteps": 5,
+      "routerConfidence": 0.5,
+      "SAI": 0.375
+    },
+    "cell-ocean-life": {
+      "count": 7,
+      "success": 7,
+      "avgLatency": 1039,
+      "successRate": 1,
+      "emaSuccess": 0.895,
+      "complianceEma": 1,
+      "adaptationSteps": 7,
+      "routerConfidence": 0.46,
+      "SAI": 0.374
+    },
+    "cell-programming": {
+      "count": 6,
+      "success": 6,
+      "avgLatency": 1101,
+      "successRate": 1,
+      "emaSuccess": 0.869,
+      "complianceEma": 1,
+      "adaptationSteps": 6,
+      "routerConfidence": 0.455,
+      "SAI": 0.423
+    }
+  },
+  "recent": [
+    {
+      "requestId": "303b7feb-9c50-46dc-a372-3d39a21942a3",
+      "cellId": "cell-general",
+      "latencyMs": 1118,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:34.192Z",
+      "prompt": "Show an example printing 'hello' in JavaScript.",
+      "response": "```javascript\nconsole.log('hello');\n\nconst output = ;\nconsole.log(JSON.stringify(output));\n```",
+      "domain": "programming",
+      "tags": [
+        "javascript",
+        "example",
+        "code",
+        "hello"
+      ]
+    },
+    {
+      "requestId": "49fb0cff-a2e6-494f-92d8-97d8dd56a199",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:34.194Z"
+    },
+    {
+      "requestId": "1af466c9-cc9b-4586-8223-f60d91fcb3ec",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:34.195Z"
+    },
+    {
+      "requestId": "f7c03e2f-ee16-421d-9b36-31887ef93645",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:34.196Z"
+    },
+    {
+      "requestId": "f4a9d3b3-9d30-456f-903e-238725d6135a",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:34.198Z"
+    },
+    {
+      "requestId": "08dd8759-47eb-4f79-a873-350a8b137f74",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:34.251Z"
+    },
+    {
+      "requestId": "6cf82193-5fb2-434f-b2f2-a5d5df563967",
+      "cellId": "cell-ocean-life",
+      "latencyMs": 878,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:35.131Z",
+      "prompt": "Write a haiku about the ocean.",
+      "response": "Crashing blue waves rise\nFoamy tides upon the shore\nOcean's soothing song",
+      "domain": "ocean life",
+      "tags": [
+        "ocean",
+        "waves",
+        "tides",
+        "serene"
+      ]
+    },
+    {
+      "requestId": "6eab7f42-2e12-45ed-aab4-203d7cb17913",
+      "cellId": "cell-base",
+      "latencyMs": 822,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:35.955Z",
+      "prompt": "How to print 'hi' in TypeScript.",
+      "response": "```typescript\nconsole.log('hi');\n```",
+      "domain": "typescript",
+      "tags": [
+        "print",
+        "string",
+        "console",
+        "log",
+        "typescript"
+      ]
+    },
+    {
+      "requestId": "ac149b9b-9d08-4416-ba85-3b5b54da08f1",
+      "cellId": "cell-ocean",
+      "latencyMs": 1196,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:37.153Z",
+      "prompt": "Show an example printing 'hello' in JavaScript.",
+      "response": "```javascript\nconsole.log('hello');\n\nconst output = ;\nconsole.log(JSON.stringify(output));\n```",
+      "domain": "ocean tech",
+      "tags": [
+        "ocean",
+        "js",
+        "code",
+        "dev",
+        "web"
+      ]
+    },
+    {
+      "requestId": "82367756-3b48-467c-94dd-9ea0dd823c56",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:37.154Z"
+    },
+    {
+      "requestId": "bdc350e2-906e-4bbe-be41-13e3d2197d74",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:37.208Z"
+    },
+    {
+      "requestId": "502aad51-cab7-4fac-9adb-3d33eaba1da2",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:37.209Z"
+    },
+    {
+      "requestId": "73d73cc2-0b97-4b06-9c83-315e3463008b",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:37.210Z"
+    },
+    {
+      "requestId": "e643fc74-8586-4e0d-a7df-cef6c584eefd",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:37.211Z"
+    },
+    {
+      "requestId": "9242980d-5dbd-401f-9349-d8fa7497ee7a",
+      "cellId": "cell-general",
+      "latencyMs": 1025,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:38.237Z",
+      "prompt": "Write a haiku about the ocean.",
+      "response": "Crashing waves delight\nSalty scent and seagulls cry\nOcean's soothing song",
+      "domain": "nature",
+      "tags": [
+        "ocean",
+        "waves",
+        "haiku",
+        "poetry",
+        "sea"
+      ]
+    },
+    {
+      "requestId": "faf41cbb-55fe-4b7c-bc92-0d5606745b84",
+      "cellId": "cell-ocean-life",
+      "latencyMs": 821,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:39.110Z",
+      "prompt": "How to print 'hi' in TypeScript.",
+      "response": "```typescript\nconsole.log('hi');\n```",
+      "domain": "programming",
+      "tags": [
+        "typescript",
+        "print",
+        "console",
+        "log",
+        "output"
+      ]
+    },
+    {
+      "requestId": "7bcb9828-a8d4-4cac-8802-8673ad5d5eea",
+      "cellId": "cell-base",
+      "latencyMs": 1005,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:40.117Z",
+      "prompt": "Show an example printing 'hello' in JavaScript.",
+      "response": "```javascript\nconsole.log('hello');\n```",
+      "domain": "javascript",
+      "tags": [
+        "print",
+        "hello",
+        "console",
+        "log",
+        "javascript"
+      ]
+    },
+    {
+      "requestId": "3153c4b4-f02c-4848-89f1-419c97a34806",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:40.119Z"
+    },
+    {
+      "requestId": "37dc0aaf-8f1d-4bac-a06c-30aec0b0515a",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:40.121Z"
+    },
+    {
+      "requestId": "c8013030-91a2-4817-9a0f-54b8c7358bbd",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:40.122Z"
+    },
+    {
+      "requestId": "9760674e-cce2-40f8-8c44-07bdf5b0eec9",
+      "cellId": "cell-ocean-life",
+      "latencyMs": 882,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:41.258Z",
+      "prompt": "Write a haiku about the ocean.",
+      "response": "Deep blue ocean vast\nGentle waves upon the shore\nPeaceful evening sky",
+      "domain": "ocean life",
+      "tags": [
+        "ocean",
+        "waves",
+        "peaceful",
+        "blue",
+        "shore"
+      ]
+    },
+    {
+      "requestId": "bd1c2486-4bbe-4f4c-95cf-0b0789324c80",
+      "cellId": "cell-programming",
+      "latencyMs": 1657,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:42.917Z",
+      "prompt": "How to print 'hi' in TypeScript.",
+      "response": "```typescript\nconsole.log('hi');\n\nconst output = ;\n\nconsole.log(JSON.stringify(output));\n```",
+      "domain": "programming",
+      "tags": [
+        "typescript",
+        "code",
+        "programming",
+        "development"
+      ]
+    },
+    {
+      "requestId": "7272ef73-b288-4215-b738-6140625968d4",
+      "cellId": "cell-programming",
+      "latencyMs": 832,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:43.751Z",
+      "prompt": "Show an example printing 'hello' in JavaScript.",
+      "response": "```javascript\nconsole.log('hello');\n\nconst output = ;\n\nconsole.log(JSON.stringify(output));\n```",
+      "domain": "programming",
+      "tags": [
+        "javascript",
+        "code",
+        "dev"
+      ]
+    },
+    {
+      "requestId": "7539ad92-49a9-491c-8f6f-34d583c87f86",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:43.752Z"
+    },
+    {
+      "requestId": "bc683226-eaeb-41ce-9dcb-a7097458a09c",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:43.754Z"
+    },
+    {
+      "requestId": "41464921-664a-4546-b2a6-9b67b376e49a",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:43.806Z"
+    },
+    {
+      "requestId": "4776bb44-2ca0-401c-b96a-f0c78c19b00f",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:43.808Z"
+    },
+    {
+      "requestId": "09b1a2d4-e955-49dc-ab64-395f13d004dd",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:43.809Z"
+    },
+    {
+      "requestId": "14fb246f-65fb-483a-ab1e-c3be06d58fee",
+      "cellId": "cell-ocean-life",
+      "latencyMs": 1641,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:45.451Z",
+      "prompt": "Write a haiku about the ocean.",
+      "response": "Crashing blue waves rise\nFoamy tides upon the shore\nOcean's soothing song",
+      "domain": "ocean life",
+      "tags": [
+        "ocean",
+        "waves",
+        "blue",
+        "tides",
+        "serene"
+      ]
+    },
+    {
+      "requestId": "2211e221-e549-4665-88be-41e5773d1bde",
+      "cellId": "cell-programming",
+      "latencyMs": 1088,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:46.541Z",
+      "prompt": "How to print 'hi' in TypeScript.",
+      "response": "```typescript\nconsole.log('hi');\n\nconst output = ;\n\nconsole.log(JSON.stringify(output));\n```",
+      "domain": "programming",
+      "tags": [
+        "typescript",
+        "code",
+        "dev",
+        "programming",
+        "type"
+      ]
+    },
+    {
+      "requestId": "132c4fb1-50be-4ef5-bef2-89aeb8a5f7b9",
+      "cellId": "cell-ocean-life",
+      "latencyMs": 857,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:47.451Z",
+      "prompt": "Show an example printing 'hello' in JavaScript.",
+      "response": "```javascript\nconsole.log('hello');\n```",
+      "domain": "programming",
+      "tags": [
+        "javascript",
+        "print",
+        "hello",
+        "log",
+        "output"
+      ]
+    },
+    {
+      "requestId": "f4a07dce-86a0-4284-9de8-5ce9bc5bfd23",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:47.454Z"
+    },
+    {
+      "requestId": "2d9b347f-3834-4c00-8467-141e47764b75",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:47.455Z"
+    },
+    {
+      "requestId": "89dbacf1-9124-472f-9cea-05d1951d164a",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:47.456Z"
+    },
+    {
+      "requestId": "41221620-7b69-410c-aac5-b28cedd01889",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:47.457Z"
+    },
+    {
+      "requestId": "55095d64-f338-42f0-9c5b-541767250304",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:47.509Z"
+    },
+    {
+      "requestId": "dfdc96dc-b20b-4c62-87a1-8aec694258aa",
+      "cellId": "cell-ocean-life",
+      "latencyMs": 1027,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:48.537Z",
+      "prompt": "Write a haiku about the ocean.",
+      "response": "Salty ocean breeze\nGentle waves upon the shore\nPeaceful evening sky",
+      "domain": "ocean life",
+      "tags": [
+        "ocean",
+        "serene",
+        "waves",
+        "peaceful",
+        "blue"
+      ]
+    },
+    {
+      "requestId": "ece8be78-5dac-4a58-9c5e-bb41c3572df3",
+      "cellId": "cell-programming",
+      "latencyMs": 1017,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:49.556Z",
+      "prompt": "How to print 'hi' in TypeScript.",
+      "response": "```typescript\nconsole.log('hi');\n\nconst output = ;\n\nconsole.log(JSON.stringify(output));\n```",
+      "domain": "programming",
+      "tags": [
+        "code",
+        "dev",
+        "typescript",
+        "programming"
+      ]
+    },
+    {
+      "requestId": "9d2531e5-ca15-48a4-96a1-2779436bdd02",
+      "cellId": "cell-programming",
+      "latencyMs": 987,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:50.544Z",
+      "prompt": "Show an example printing 'hello' in JavaScript.",
+      "response": "```javascript\nconsole.log('hello');\n\nconst output = ;\n\nconsole.log(JSON.stringify(output));\n```",
+      "domain": "programming",
+      "tags": [
+        "js",
+        "code",
+        "dev",
+        "programming",
+        "tech"
+      ]
+    },
+    {
+      "requestId": "20b1af07-fd9a-4f10-afda-cd11bc06d021",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:50.544Z"
+    },
+    {
+      "requestId": "e22379f6-3250-44c7-bf87-fbfa60cad558",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:50.596Z"
+    },
+    {
+      "requestId": "52d17e17-372a-486a-9fe8-2f6f450abf07",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:50.597Z"
+    },
+    {
+      "requestId": "139ab391-6cc4-4508-8428-f51d82a045b0",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:50.598Z"
+    },
+    {
+      "requestId": "ba4a235d-fa14-479f-957a-a1940df8ee6c",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:50.598Z"
+    },
+    {
+      "requestId": "65adb160-d939-4188-a990-9cd661e04a97",
+      "cellId": "cell-ocean-life",
+      "latencyMs": 1165,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:51.764Z",
+      "prompt": "Write a haiku about the ocean.",
+      "response": "Crashing blue waves rise\nFoamy tides upon the shore\nOcean's soothing song",
+      "domain": "ocean life",
+      "tags": [
+        "ocean",
+        "waves",
+        "blue",
+        "tides",
+        "serene"
+      ]
+    },
+    {
+      "requestId": "0668c3b5-c2dc-4f74-bb29-0c5fbcb52980",
+      "cellId": "cell-general",
+      "latencyMs": 1104,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:52.921Z",
+      "prompt": "How to print 'hi' in TypeScript.",
+      "response": "```typescript\nconsole.log('hi');\n\nconst output = ;\nconsole.log(JSON.stringify(output));\n```",
+      "domain": "programming",
+      "tags": [
+        "typescript",
+        "example",
+        "code",
+        "print"
+      ]
+    },
+    {
+      "requestId": "30b14cdb-2e6f-4d77-a18a-4fd7f4d1323d",
+      "cellId": "cell-programming",
+      "latencyMs": 1026,
+      "success": true,
+      "policyPassed": true,
+      "timestamp": "2025-10-17T14:29:53.948Z",
+      "prompt": "Show an example printing 'hello' in JavaScript.",
+      "response": "```javascript\nconsole.log('hello');\n\nconst output = ;\n\nconsole.log(JSON.stringify(output));\n```",
+      "domain": "programming",
+      "tags": [
+        "js",
+        "code",
+        "dev",
+        "tech"
+      ]
+    },
+    {
+      "requestId": "cdf95849-1721-4e93-b6fa-7e13547514be",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:53.948Z"
+    },
+    {
+      "requestId": "186536f4-0372-4b9b-b837-f3a258562a48",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:53.949Z"
+    },
+    {
+      "requestId": "ff49a8ad-76b1-445a-bca3-9e87b48d42a5",
+      "cellId": "(none)",
+      "latencyMs": 0,
+      "success": false,
+      "policyPassed": false,
+      "timestamp": "2025-10-17T14:29:53.950Z"
+    }
+  ]
+}

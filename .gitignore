@@ -1,0 +1,34 @@
+# Node/TypeScript build artifacts
+node_modules/
+dist/
+.tsbuildinfo
+
+# Logs and temp
+logs/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+tmp/
+.cache/
+
+# Environment files
+.env
+.env.*
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
+
+# Coverage and tools
+coverage/
+.nyc_output
+.pnpm-store
+.turbo/
+.vercel/
+knowledge/
+.nuxt/
+.output/
+dashboard/.nuxt/
+dashboard/.output/
+dashboard/node_modules/

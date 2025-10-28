@@ -1,0 +1,11 @@
+curl -s http://127.0.0.1:3000/env/snapshot | jq
+curl -s http://127.0.0.1:3000/metrics | jq
+curl -s http://127.0.0.1:3000/metrics/detailed | jq '{perCell: .perCell, recent: ((.recent // []) | .[-10:])}'
+curl -s 'http://127.0.0.1:3000/actions/sample?limit=20' | jq 'map({ts: .timestamp, cell: .cellId, policy: .policy.passed, reason: .policy.reason, router: .routerStrategy})'
+curl -s http://127.0.0.1:3000/evolution/state | jq
+curl -s 'http://127.0.0.1:3000/evolution/logs?limit=10' | jq 'map({time: .timestamp, pattern: .patternId, deltaV: .deltaV, decision: .decision})'
+curl -s http://127.0.0.1:3000/tools/metrics | jq
+curl -s http://127.0.0.1:3000/tools/registry | jq 'map({id, successRate, avgLatency})'
+curl -s http://127.0.0.1:3000/tools/knowledge | jq 'to_entries|map({id: .key, count: .value.count, ok: .value.ok, avgLatency: ((.value.latencySum/((.value.count//1)+0.0001))|floor)})'
+curl -s http://127.0.0.1:3000/router/state | jq '{epsilon, params, topCounts: ((.counts//{})|to_entries|sort_by(.value)|reverse|.[0:5]), topValues: ((.values//{})|to_entries|sort_by(.value)|reverse|.[0:5])}'
+curl -s http://127.0.0.1:3000/analytics/domain-matrix | jq

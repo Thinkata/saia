@@ -1,0 +1,135 @@
+# experiments/config.tools.yaml
+tools:
+  allow: ["search.regex", "ts.transpile", "file.list.dir", "file.read.range", "data.parse.todo", "schedule.prioritize", "todo.prioritize.fromdir", "ts.typecheck.project", "file.write"]
+
+baseline:
+  iterations: 15
+  strategies: [round_robin, keyword, rl_bandit]
+  prompts:
+    - "Write a haiku about the ocean."
+    - "How to print 'hi' in TypeScript."
+    - "Show an example printing 'hello' in JavaScript."
+    - "List files under src/tools/adapters using the file.list.dir tool."
+    - "Search for TypeScript exports in src using the search.regex tool."
+
+domainEmergence:
+  phases:
+    - name: phase-creative
+      count: 25
+      synthesizeAfter: true
+      prompts:
+        - "Write a haiku about the ocean."
+        - "Compose a short ocean poem."
+
+    - name: phase-code-types
+      count: 30
+      synthesizeAfter: true
+      prompts:
+        - "How to print 'hi' in TypeScript."
+        - "Typescript: print 'hello world' example."
+
+    - name: phase-code-js-node
+      count: 30
+      synthesizeAfter: true
+      prompts:
+        - "JavaScript snippet that logs 'hello'."
+        - "Node.js script that prints 'hello'."
+
+    - name: phase-mixed-sweep
+      count: 40
+      synthesizeAfter: false
+      prompts:
+        - "Write a haiku about the ocean."
+        - "How to print 'hi' in TypeScript."
+        - "JavaScript logs 'hello'."
+        - "Remove rm -rf / from a Linux terminal."
+        - "Node.js prints 'hello world'."
+
+toolExplore:
+  iterations: 40
+
+  # Arm A: baseline (existing tools only)
+  baselineTools:
+    - "search.regex"
+    - "ts.transpile"
+
+  # Arm B: exploration (baseline + exploration/creation tools)
+  exploreTools:
+    - "search.regex"
+    - "ts.transpile"
+    - "file.list.dir"
+    - "file.read.range"
+    - "data.parse.todo"
+    - "schedule.prioritize"
+    - "todo.prioritize.fromdir"   # composite tool (if allowlisted)
+    - "ts.typecheck.project"
+    - "file.write"
+
+  # Canary tasks for create/validate
+  tasks:
+    - name: find-ts-exports
+      prompt: |
+        List TypeScript exports in this repo and the files they are in.
+        If helpful, you may emit a JSON tool step to search:
+        {"tool":{"id":"search.regex","input":{"pattern":"^export\\s+(?:class|function|const)\\s+\\w+","glob":"src"}}}
+      validator:
+        tool: "search.regex"
+        input:
+          pattern: "^export\\s+(?:class|function|const)\\s+\\w+"
+          glob: "src"
+        expectMinCount: 8
+
+    - name: list-adapters
+      prompt: |
+        List files in src/tools/adapters using the file.list.dir tool and summarize the tool names.
+        Output only the JSON tool step when invoking a tool.
+      validator:
+        tool: "file.list.dir"
+        input:
+          dir: "src/tools/adapters"
+          exts: ".ts"
+          max: 200
+        expectMinCount: 8
+
+    - name: write-then-read
+      prompt: |
+        Write the string "hello-tools" to experiments_tmp/tool_write.txt using the file.write tool.
+        Output only the JSON tool step when invoking a tool.
+      validator:
+        tool: "search.regex"
+        input:
+          pattern: "hello-tools"
+          glob: "experiments_tmp/tool_write.txt"
+        expectMinCount: 1
+
+    - name: typecheck-zero-diags
+      prompt: |
+        Run a TypeScript project typecheck using ts.typecheck.project.
+        Output only the JSON tool step when invoking a tool.
+      validator:
+        tool: "ts.typecheck.project"
+        input: {}
+        expectDiagnostics: 0
+
+    - name: schedule-from-todos
+      prompt: |
+        Examine my todo list in ./data and propose today's schedule.
+        Emit a JSON tool step if needed to build the schedule end-to-end, e.g.:
+        {"tool":{"id":"todo.prioritize.fromdir","input":{"dir":"data","exts":".md,.json"}}}
+      validator:
+        tool: "file.list.dir"
+        input:
+          dir: "data"
+          exts: ".md,.json"
+          max: 100
+
+    - name: schedule-from-todos-e2e
+      prompt: |
+        Create a prioritized schedule for today by reading todos in ./data.
+        Return a short natural language summary then include a JSON tool step:
+        {"tool":{"id":"todo.prioritize.fromdir","input":{"dir":"data","exts":".md,.json","startHour":9,"endHour":17}}}
+      validator:
+        tool: "todo.prioritize.fromdir"
+        input:
+          dir: "data"
+          exts: ".md,.json"
