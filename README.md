@@ -1,6 +1,6 @@
 ## Self-Adaptive Intelligence Architecture (SAIA)
 
-This is a minimal, local, developer-friendly prototype of SAIA:
+This repo is a minimal, local, developer-friendly prototype of an AI‑Native system. Unlike agentic libraries that compose tools and prompts inside a single process, SAIA treats the infrastructure itself as cognitive: it learns, governs, and evolves at runtime under stability guarantees.
 - Modular GenAI cells
 - Orchestrator patterns (round-robin, random, keyword) and adaptive routing
 - Governance SAGA stub (policy check + signed action/events)
@@ -8,6 +8,17 @@ This is a minimal, local, developer-friendly prototype of SAIA:
 - Express server exposing `/act`, `/metrics`, `/metrics/detailed`, Level 3 `/evolve`, `/evolution/state`
 
 Companion article: [Stability Through Continuous Adaptation – AI‑Native Overview](https://thinkata.com/news/insights/ai-native-overview)
+
+### How SAIA differs from agent frameworks
+- **Infrastructure-level governance**: Policies enforced at runtime outside agent code with cryptographically signed audit trails (actions, tools, patterns). Update governance rules without redeploying agents.
+
+- **Formally stable evolution**: Pattern changes accepted only when they satisfy a Lyapunov-style stability criterion (ΔV = αΔsuccess − βΔcomplexity < 0). SAIA provides mathematical guarantees that architectural changes won't degrade system reliability.
+
+- **Self-adaptive routing infrastructure**: Epsilon-greedy bandit continuously learns optimal cell-to-prompt mappings from production feedback. Unlike static routing, SAIA's routing adapts automatically while maintaining provable stability bounds.
+
+- **Emergent cell synthesis**: Cells autonomously specialize through observed domain clustering and merge when redundant (similarity + overlap thresholds). Goes beyond fixed agent roles to enable organic capability evolution.
+
+- **Governance-integrated observability**: Unified metrics expose routing confidence, EMA success, policy compliance, and adaptation state. All events (actions, evolutions, tool calls) carry cryptographic signatures for regulatory audit.
 
 ### AI‑Native Principles → Implementation (Mapping)
 - **Intelligent Composability**: specialized cells coordinated by adaptive routers
