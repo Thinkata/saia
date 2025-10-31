@@ -22,9 +22,9 @@ export interface SignedAction {
   adaptationReason?: string;
 }
 
-export function verifyPolicy(input: string): PolicyResult {
+export async function verifyPolicy(input: string): Promise<PolicyResult> {
   // Adaptive, learning policy using PolicyEngine (continuous risk score)
-  const dec = policyEngine.evaluate(input);
+  const dec = await policyEngine.evaluate(input);
   return { passed: dec.passed, reason: dec.passed ? undefined : dec.reason, risk: dec.risk };
 }
 

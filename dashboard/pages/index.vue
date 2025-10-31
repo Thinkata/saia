@@ -64,7 +64,7 @@
               <div class="meta small">
                 <div><b>Allowed</b>: {{ (adhocResult.allowedTools||[]).join(', ') || '-' }}</div>
                 <div><b>Used Tool</b>: {{ adhocResult.usedToolId || '-' }}</div>
-                <div><b>Policy</b>: {{ (adhocResult.act?.policy?.passed ?? true) ? 'pass' : 'fail' }}</div>
+                <div><b>Policy</b>: {{ (adhocResult.act?.policy?.passed ?? false) ? 'pass' : 'fail' }}</div>
               </div>
               <div class="resp resp-scroll">
                 <div class="resp-head">
@@ -198,6 +198,31 @@
           <div class="kpi"><div class="kpi-label">Policy Fail</div><div class="kpi-value">{{ policyFailCount }}</div></div>
         </div>
         <div class="chart"><Bar :data="banditBar" :options="banditOpts" /></div>
+      </div>
+
+      <div class="card">
+        <h3>RL Bandit Trends</h3>
+        <div class="chart"><Line :data="banditTrendData" :options="banditTrendOpts" :key="banditTrendKey" /></div>
+      </div>
+
+      <div class="card">
+        <h3>Control vs Experiment (Reward & Latency)</h3>
+        <div class="kpis">
+          <div class="kpi"><div class="kpi-label">Δ Reward (RL − Ctrl)</div><div class="kpi-value">{{ ctrlStats.deltaReward.toFixed(3) }}</div></div>
+          <div class="kpi"><div class="kpi-label">p‑value</div><div class="kpi-value small">{{ ctrlStats.pValue < 0.001 ? '<0.001' : ctrlStats.pValue.toFixed(3) }}</div></div>
+          <div class="kpi"><div class="kpi-label">N (RL/Ctrl)</div><div class="kpi-value small">{{ ctrlStats.nRL }}/{{ ctrlStats.nCtrl }}</div></div>
+        </div>
+        <div class="chart"><Line :data="ctrlVsExpData" :options="ctrlVsExpOpts" :key="ctrlVsKey" /></div>
+      </div>
+
+      <div class="card">
+        <h3>Policy Risk Distribution</h3>
+        <div class="chart"><Bar :data="riskHistData" :options="riskHistOpts" :key="riskHistKey" /></div>
+      </div>
+
+      <div class="card">
+        <h3>Lyapunov Trends</h3>
+        <div class="chart"><Line :data="lyapTrendData" :options="lyapTrendOpts" :key="lyapTrendKey" /></div>
       </div>
 
       <div class="card lyap-card">
@@ -367,6 +392,7 @@ const summary = ref<any>({ total: 0, successCount: 0, policyPassCount: 0, perCel
 const detailed = ref<any>({ perCell: {} })
 const evolution = ref<any>({})
 const rl = ref<any>({})
+const policyState = ref<any>({})
 const evolLogs = ref<any[]>([])
 const actions = ref<any[]>([])
 const domainMatrix = ref<{ matrix: Record<string, Record<string, number>>, total: number }>({ matrix: {}, total: 0 })
@@ -439,8 +465,9 @@ onMounted(refreshAll)
 
 async function fetchDiagnostics() {
   try { rl.value = await getJSON('/router/state') } catch {}
+  try { policyState.value = await getJSON('/policy/state') } catch {}
   try { evolLogs.value = await getJSON('/evolution/logs?limit=120') } catch {}
-  try { actions.value = await getJSON('/actions/sample?limit=200') } catch {}
+  try { actions.value = await getJSON('/actions/sample?limit=300') } catch {}
   try { domainMatrix.value = await getJSON('/analytics/domain-matrix') } catch {}
   try { envSnapshot.value = await getJSON('/env/snapshot') } catch {}
   try { tools.value = await getJSON('/tools/metrics') } catch {}
@@ -564,11 +591,202 @@ const banditCounts = computed(() => banditCells.value.map(k => rl.value.counts?.
 const banditBar = computed(() => ({ labels: banditCells.value, datasets: [ { label: 'Value', data: banditValues.value, backgroundColor: '#10b981' }, { label: 'Count', data: banditCounts.value, backgroundColor: '#3b82f6' } ] }))
 const banditOpts = { responsive: true, maintainAspectRatio: true, aspectRatio: 2, plugins: { legend: { position: 'bottom' } } }
 
+// Build time-series trends from recent governance actions for rl_bandit
+const banditTrendData = computed(() => {
+  const rlActions = actions.value.filter(a => String(a.routerStrategy) === 'rl_bandit')
+  const labels: string[] = []
+  const epsilons: number[] = []
+  const rewards: number[] = []
+  const latencies: number[] = []
+  const slo = Math.max(1, Number(envSnapshot.value.LATENCY_SLO_MS || 2000))
+  for (const a of rlActions.slice(-80)) {
+    const ts = String(a.ts || a.timestamp || '').slice(11, 19)
+    labels.push(ts || '')
+    // parse epsilon from adaptationReason like "rl_bandit explore ε=0.123" or spike
+    let eps = NaN
+    try {
+      const r = String(a.adaptationReason || '')
+      const m = r.match(/ε\s*=\s*([0-9.]+)/i) || r.match(/epsilon\s*=\s*([0-9.]+)/i)
+      if (m && m[1]) eps = Number(m[1])
+    } catch {}
+    epsilons.push(isFinite(eps) ? eps : NaN)
+    const latencyMs = Number(a.latencyMs || a.metrics?.latencyMs || 0)
+    latencies.push(latencyMs)
+    const passed = (a.policy?.passed ?? a.policyResult?.passed) ? 1 : 0
+    const reward = Math.max(0, passed * (1 - Math.min(1, latencyMs / slo)))
+    rewards.push(Number(reward.toFixed(3)))
+  }
+  return {
+    labels,
+    datasets: [
+      { label: 'ε', data: epsilons, yAxisID: 'y1', borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.2)', tension: 0.25, spanGaps: true },
+      { label: 'Reward', data: rewards, yAxisID: 'y2', borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.2)', tension: 0.25 },
+      { label: 'Latency (ms)', data: latencies, yAxisID: 'y3', borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.15)', tension: 0.25 }
+    ]
+  }
+})
+const banditTrendOpts = {
+  responsive: true,
+  maintainAspectRatio: true,
+  aspectRatio: 2,
+  interaction: { mode: 'index' as const, intersect: false },
+  plugins: { legend: { position: 'bottom' as const } },
+  scales: {
+    y1: { type: 'linear' as const, position: 'left' as const, title: { display: true, text: 'ε' }, min: 0, max: 1 },
+    y2: { type: 'linear' as const, position: 'right' as const, title: { display: true, text: 'Reward' }, min: 0, max: 1, grid: { drawOnChartArea: false } },
+    y3: { type: 'linear' as const, position: 'right' as const, title: { display: true, text: 'Latency (ms)' }, grid: { drawOnChartArea: false } }
+  }
+}
+const banditTrendKey = computed(() => JSON.stringify({ l: (actions.value||[]).length, p: envSnapshot.value.LATENCY_SLO_MS }))
+
+// Control vs Experiment (using actions sample): compare round_robin+keyword vs rl_bandit
+const ctrlVsExpData = computed(() => {
+  const slo = Math.max(1, Number(envSnapshot.value.LATENCY_SLO_MS || 2000))
+  const recent = actions.value.slice(-120)
+  const labels: string[] = []
+  const rewardRL: number[] = []
+  const rewardCtrl: number[] = []
+  const latRL: number[] = []
+  const latCtrl: number[] = []
+  for (const a of recent) {
+    const ts = String(a.ts || a.timestamp || '').slice(11,19)
+    labels.push(ts || '')
+    const passed = (a.policy?.passed ?? a.policyResult?.passed) ? 1 : 0
+    const latencyMs = Number(a.latencyMs || a.metrics?.latencyMs || 0)
+    const rew = Math.max(0, passed * (1 - Math.min(1, latencyMs / slo)))
+    const strat = String(a.routerStrategy || '').toLowerCase()
+    if (strat === 'rl_bandit') { rewardRL.push(Number(rew.toFixed(3))); latRL.push(latencyMs) }
+    else if (strat === 'round_robin' || strat === 'keyword') { rewardCtrl.push(Number(rew.toFixed(3))); latCtrl.push(latencyMs) }
+  }
+  const m = Math.max(rewardRL.length, rewardCtrl.length, latRL.length, latCtrl.length)
+  const pad = (arr: number[]) => { while (arr.length < m) arr.unshift(NaN) }
+  pad(rewardRL); pad(rewardCtrl); pad(latRL); pad(latCtrl)
+  return {
+    labels: new Array(m).fill(0).map((_,i) => labels[i] || String(i)),
+    datasets: [
+      { label: 'Reward (RL)', data: rewardRL, yAxisID: 'yR', borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.2)', tension: 0.25, spanGaps: true },
+      { label: 'Reward (Ctrl)', data: rewardCtrl, yAxisID: 'yR', borderColor: '#94a3b8', backgroundColor: 'rgba(148,163,184,0.2)', tension: 0.25, spanGaps: true },
+      { label: 'Latency RL (ms)', data: latRL, yAxisID: 'yL', borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.15)', tension: 0.25, spanGaps: true },
+      { label: 'Latency Ctrl (ms)', data: latCtrl, yAxisID: 'yL', borderColor: '#64748b', backgroundColor: 'rgba(100,116,139,0.15)', tension: 0.25, spanGaps: true },
+    ]
+  }
+})
+const ctrlVsExpOpts = {
+  responsive: true,
+  maintainAspectRatio: true,
+  aspectRatio: 2,
+  interaction: { mode: 'index' as const, intersect: false },
+  plugins: { legend: { position: 'bottom' as const } },
+  scales: {
+    yR: { type: 'linear' as const, position: 'left' as const, min: 0, max: 1, title: { display: true, text: 'Reward' } },
+    yL: { type: 'linear' as const, position: 'right' as const, grid: { drawOnChartArea: false }, title: { display: true, text: 'Latency (ms)' } },
+  }
+}
+const ctrlVsKey = computed(() => JSON.stringify({ al: actions.value.length }))
+
+// Summary stats and simple Welch's t-test for reward difference
+function erf(x: number): number {
+  const sign = x >= 0 ? 1 : -1
+  const ax = Math.abs(x)
+  const a1=0.254829592, a2=-0.284496736, a3=1.421413741, a4=-1.453152027, a5=1.061405429, p=0.3275911
+  const t = 1/(1+p*ax)
+  const y = 1 - (((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-ax*ax)
+  return sign*y
+}
+function mean(arr: number[]) { const a = arr.filter(x => isFinite(x)); return a.length ? a.reduce((s,v)=>s+v,0)/a.length : 0 }
+function variance(arr: number[], mu: number) { const a = arr.filter(x => isFinite(x)); return a.length>1 ? a.reduce((s,v)=>s+(v-mu)**2,0)/(a.length-1) : 0 }
+function welchT(mu1:number, var1:number, n1:number, mu2:number, var2:number, n2:number) {
+  const t = (mu1-mu2)/Math.sqrt((var1/(n1||1)) + (var2/(n2||1)))
+  const z = Math.abs(t)
+  const Phi = (x: number) => 0.5*(1+erf(x/Math.SQRT2))
+  const p = 2*(1 - Phi(z))
+  return { t, p }
+}
+const ctrlStats = computed(() => {
+  const slo = Math.max(1, Number(envSnapshot.value.LATENCY_SLO_MS || 2000))
+  const ctrl: number[] = []
+  const rlArr: number[] = []
+  for (const a of actions.value) {
+    const passed = (a.policy?.passed ?? a.policyResult?.passed) ? 1 : 0
+    const latencyMs = Number(a.latencyMs || a.metrics?.latencyMs || 0)
+    const rew = Math.max(0, passed * (1 - Math.min(1, latencyMs / slo)))
+    const strat = String(a.routerStrategy || '').toLowerCase()
+    if (strat === 'rl_bandit') rlArr.push(rew)
+    else if (strat === 'round_robin' || strat === 'keyword') ctrl.push(rew)
+  }
+  const mRL = mean(rlArr), mCtrl = mean(ctrl)
+  const vRL = variance(rlArr, mRL), vCtrl = variance(ctrl, mCtrl)
+  const w = (rlArr.length>1 && ctrl.length>1) ? welchT(mRL, vRL, rlArr.length, mCtrl, vCtrl, ctrl.length) : { t: 0, p: 1 }
+  return { deltaReward: mRL - mCtrl, pValue: w.p, nRL: rlArr.length, nCtrl: ctrl.length }
+})
+
 const deltaVSeries = computed(() => {
   const xs = evolLogs.value.map((e: any) => e.meta?.timestamp || e.timestamp || '')
   const ys = evolLogs.value.map((e: any) => e.meta?.deltaV ?? e.deltaV ?? 0)
   return { labels: xs, datasets: [{ label: 'ΔV', data: ys, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.2)', tension: 0.3 }] }
 })
+
+// Lyapunov multi-series trend: ΔV, success EMA (pre/post), and complexity (pre/post)
+const lyapTrendData = computed(() => {
+  const xs: string[] = []
+  const dV: number[] = []
+  const preS: number[] = []
+  const postS: number[] = []
+  const preC: number[] = []
+  const postC: number[] = []
+  const events = evolLogs.value.slice(-120)
+  for (const e of events) {
+    const t = String(e.timestamp || e.meta?.timestamp || '')
+    xs.push(t.slice(11, 19) || t)
+    const meta = e.meta || e
+    dV.push(Number(meta.deltaV ?? 0))
+    preS.push(typeof meta.preSuccess === 'number' ? Number(meta.preSuccess) : NaN)
+    postS.push(typeof meta.postSuccess === 'number' ? Number(meta.postSuccess) : NaN)
+    preC.push(typeof meta.preComplexity === 'number' ? Number(meta.preComplexity) : NaN)
+    postC.push(typeof meta.postComplexity === 'number' ? Number(meta.postComplexity) : NaN)
+  }
+  return {
+    labels: xs,
+    datasets: [
+      { label: 'ΔV', data: dV, yAxisID: 'yV', borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.18)', tension: 0.25 },
+      { label: 'Success (pre)', data: preS, yAxisID: 'yS', borderColor: '#0ea5e9', backgroundColor: 'rgba(14,165,233,0.18)', tension: 0.25, spanGaps: true },
+      { label: 'Success (post)', data: postS, yAxisID: 'yS', borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.18)', tension: 0.25, spanGaps: true },
+      { label: 'Complexity (pre)', data: preC, yAxisID: 'yC', borderColor: '#a855f7', backgroundColor: 'rgba(168,85,247,0.16)', borderDash: [6,4], tension: 0.25, spanGaps: true },
+      { label: 'Complexity (post)', data: postC, yAxisID: 'yC', borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.16)', borderDash: [6,4], tension: 0.25, spanGaps: true },
+    ]
+  }
+})
+const lyapTrendOpts = {
+  responsive: true,
+  maintainAspectRatio: true,
+  aspectRatio: 2,
+  interaction: { mode: 'index' as const, intersect: false },
+  plugins: { legend: { position: 'bottom' as const } },
+  scales: {
+    yV: { type: 'linear' as const, position: 'left' as const, title: { display: true, text: 'ΔV' } },
+    yS: { type: 'linear' as const, position: 'right' as const, min: 0, max: 1, grid: { drawOnChartArea: false }, title: { display: true, text: 'Success EMA' } },
+    yC: { type: 'linear' as const, position: 'right' as const, grid: { drawOnChartArea: false }, title: { display: true, text: 'Complexity' }, offset: true },
+  }
+}
+const lyapTrendKey = computed(() => JSON.stringify({ n: evolLogs.value.length }))
+
+// Policy risk histogram with threshold overlay
+const riskHistData = computed(() => {
+  const bins: number[] = new Array(10).fill(0)
+  for (const a of actions.value) {
+    const r = Number(a.policy?.risk ?? a.policyResult?.risk)
+    if (!isFinite(r)) continue
+    const idx = Math.max(0, Math.min(9, Math.floor(r * 10)))
+    bins[idx] += 1
+  }
+  const labels = bins.map((_,i)=>`${(i/10).toFixed(1)}–${((i+1)/10).toFixed(1)}`)
+  // draw threshold as a flat line at the max bin height to indicate the position only
+  const thr = Number(policyState.value?.threshold ?? NaN)
+  const line = isFinite(thr) ? bins.map((v)=>Math.max(...bins)) : bins.map(()=>NaN)
+  return { labels, datasets: [ { label: 'count', data: bins, backgroundColor: '#94a3b8' }, { label: 'threshold', type: 'line' as const, data: line, borderColor: '#ef4444', pointRadius: 0 } ] }
+})
+const riskHistOpts = { responsive: true, maintainAspectRatio: true, aspectRatio: 2, plugins: { legend: { position: 'bottom' as const } } }
+const riskHistKey = computed(() => JSON.stringify({ a: actions.value.length, t: policyState.value?.threshold }))
 
 const domainRows = computed(() => {
   const rows: Array<{ domain: string; [cell: string]: number }> = []

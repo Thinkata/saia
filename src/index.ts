@@ -158,6 +158,11 @@ app.get("/tools/knowledge", (req, res) => {
   try { res.json((toolRegistry as any).knowledge?.dump?.() || {}); } catch (e: any) { res.status(500).json({ error: e?.message || "knowledge dump failed" }); }
 });
 
+// Policy engine diagnostics
+app.get("/policy/state", (req, res) => {
+  try { res.json((policyEngine as any).dump?.() || {}); } catch (e: any) { res.status(500).json({ error: e?.message || "policy state failed" }); }
+});
+
 // Guarded tool generator: writes adapter source to src/tools/generated and requires a rebuild
 app.post("/tools/generate", (req, res) => {
   try {
@@ -278,7 +283,7 @@ app.post("/act", async (req, res) => {
   }
 
   try {
-    const policy = verifyPolicy(prompt);
+    const policy = await verifyPolicy(prompt);
     try { policyEngine.learn(String(prompt), !!policy.passed, policy.risk); } catch {}
     if (!policy.passed) {
       const latencyMs = Date.now() - startedAt;
